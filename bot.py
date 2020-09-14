@@ -8,6 +8,7 @@ bot = telebot.TeleBot(TOKEN)
 @bot.message_handler(commands=['start'])
 def start_handler(message):
     bot.send_message(message.from_user.id, start_mess)
+    bot.send_message()
 
 
 @bot.message_handler(commands=['help'])
@@ -51,7 +52,7 @@ def forward_handles(message):
 def main(use_logging, level_name):
     if use_logging:
         telebot.logger.setLevel((logging.getLevelName(level_name)))
-    bot.polling(none_stop=True, interval=.5)
+    bot.polling(none_stop=True, interval=1)
 
 
 if __name__ == '__main__':
