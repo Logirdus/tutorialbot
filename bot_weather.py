@@ -4,8 +4,9 @@ from pprint import pprint
 token = '1428455785:AAH3qVi5lKSQ7mLHHZcrXcr49hRKXnmhaJc'
 
 bot = telebot.TeleBot(token)
+
 '''
-При каждом запуске создается пустой словарь истории запросов вида
+При каждом запуске создается пустой словарь истории history вида:
 {
   "%Город%": {
     "%день%": [
@@ -19,6 +20,7 @@ history = {}
 
 
 def add_history(city, forecast, date='сегодня'):
+    # функция добавляет запись в историю запросов погоды
     if city in history:
         if date in history[city]:
             history[city][date].append(forecast)
@@ -29,7 +31,24 @@ def add_history(city, forecast, date='сегодня'):
 
 
 def read_history(city, date):
-    pass
+    # функция возвращает до 3х последних запросов из истории
+    # если запросов для города/даты не было возвращает соответствующее сообщение
+    if city not in history:
+        callback = f'История запросов для города "{city}" пуста'
+    elif date not in history[city]:
+        callback = f'История запросов для города "{city}" за дату "{date}" пуста'
+    else:
+        callback = f'История погоды для города {city}\n{date}\n\n'
+        history_size = len(history[city][date])
+        if history_size < 3:
+            for i in range(history_size):
+                callback += history[city][date][-i] + '\n'
+        else:
+            for i in range(1, 4):
+                callback += history[city][date][-i] + '\n'
+        callback += f'\nВсего запросов {history_size}'
+
+    return callback
 
 
 @bot.message_handler(func=lambda message: True)
@@ -47,9 +66,9 @@ def weather(message):
         add_history(city, 'Завтра еще лучше!', date)
         pprint(history)
     elif 'история' in message.text.lower():
-        req = [i for i in message.text.lower().split()]
-        print(req)
-        bot.reply_to(message, req)
+        city = message.text.split()[1]
+        date = message.text.split()[2]
+        bot.reply_to(message, read_history(city, date))
     else:
         bot.reply_to(message, 'Я тебя не понял')
 
