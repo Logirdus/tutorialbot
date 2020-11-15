@@ -1,5 +1,4 @@
 import telebot
-from pprint import pprint
 
 token = '1428455785:AAH3qVi5lKSQ7mLHHZcrXcr49hRKXnmhaJc'
 
@@ -60,13 +59,11 @@ def weather(message):
     elif message.text == 'Москва':
         bot.reply_to(message, 'Сейчас отличная погода!')
         add_history(message.text, 'Сейчас отличная погода!')
-        pprint(history)
     elif message.text == 'Москва завтра':
         bot.reply_to(message, 'Завтра еще лучше!')
         city = message.text.split()[0]
         date = message.text.split()[1]
         add_history(city, 'Завтра еще лучше!', date)
-        pprint(history)
     # запрос истории 'история %Город% %день%'
     elif 'история' in message.text.lower():
         city = message.text.split()[1]
